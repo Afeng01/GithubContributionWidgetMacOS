@@ -31,20 +31,18 @@ struct ContributionGrid: View {
     var body: some View {
         GeometryReader { geometry in
             let weeksToShow = range.weeks
-            let outerCornerRadius: CGFloat = family == .systemMedium ? 30 : 22
-            let outerPadding = max(7, geometry.size.width * 0.015)
-            let borderGap: CGFloat = family == .systemMedium ? 8 : 6
-            let contentInset: CGFloat = family == .systemMedium ? 12 : 8
-            let contentPadding = outerPadding + borderGap + contentInset
+            let framePaddingX: CGFloat = family == .systemMedium ? 18 : 12
+            let framePaddingY: CGFloat = family == .systemMedium ? 11 : 8
+            let outerMarginX = max(14, geometry.size.width * 0.045)
+            let outerMarginY = max(18, geometry.size.height * 0.09)
 
-            let availableHeight = geometry.size.height - contentPadding * 2
-            let availableWidth = geometry.size.width - contentPadding * 2
+            let availableWidth = geometry.size.width - (outerMarginX + framePaddingX) * 2
             let verticalSpacingTotal = spacing * 6
             let horizontalSpacingTotal = spacing * CGFloat(max(weeksToShow - 1, 0))
 
-            let cellSizeFromHeight = (availableHeight - verticalSpacingTotal) / 7
-            let cellSizeFromWidth = (availableWidth - horizontalSpacingTotal) / CGFloat(max(weeksToShow, 1))
-            let cellSize = max(2, min(cellSizeFromHeight, cellSizeFromWidth))
+            let cellSizeFromWidth =
+                (availableWidth - horizontalSpacingTotal) / CGFloat(max(weeksToShow, 1))
+            let cellSize = max(2, cellSizeFromWidth)
 
             let weeksArray = weeks(from: contributions, weeksToShow: weeksToShow)
 
@@ -54,31 +52,22 @@ struct ContributionGrid: View {
                 ) * spacing
             let actualGridHeight = (cellSize * 7) + verticalSpacingTotal
 
-            let gridLeading = contentPadding + max(0, (availableWidth - actualGridWidth) / 2)
-            let gridTop = contentPadding + max(0, (availableHeight - actualGridHeight) / 2)
-            let frameShape = RoundedRectangle(cornerRadius: outerCornerRadius, style: .continuous)
+            let frameWidth = actualGridWidth + framePaddingX * 2
+            let frameHeight = actualGridHeight + framePaddingY * 2
+            let frameX = (geometry.size.width - frameWidth) / 2
+            let frameY = max(outerMarginY, (geometry.size.height - frameHeight) / 2)
+            let gridLeading = frameX + framePaddingX
+            let gridTop = frameY + framePaddingY
+            let frameShape = RoundedRectangle(cornerRadius: family == .systemMedium ? 28 : 20, style: .continuous)
 
             ZStack(alignment: .topLeading) {
                 frameShape
                     .stroke(
-                        DesktopCalendarTheme.color(for: .high, scheme: scheme).opacity(0.48),
-                        lineWidth: 1.25
-                    )
-                    .padding(outerPadding)
-                    .shadow(
-                        color: DesktopCalendarTheme.color(for: .high, scheme: scheme).opacity(0.16),
-                        radius: 6,
-                        x: 0,
-                        y: 2
-                    )
-
-                frameShape
-                    .inset(by: borderGap)
-                    .stroke(
-                        DesktopCalendarTheme.color(for: .high, scheme: scheme).opacity(0.74),
+                        DesktopCalendarTheme.color(for: .high, scheme: scheme).opacity(0.16),
                         lineWidth: 1.3
                     )
-                    .padding(outerPadding)
+                    .frame(width: frameWidth, height: frameHeight)
+                    .position(x: frameX + frameWidth / 2, y: frameY + frameHeight / 2)
 
                 HStack(spacing: spacing) {
                     ForEach(weeksArray.indices, id: \.self) { weekIndex in
