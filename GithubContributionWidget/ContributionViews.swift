@@ -25,8 +25,6 @@ struct ContributionGrid: View {
     let family: WidgetFamily
     let scheme: ColorScheme
 
-    private let weeksToShow = 26
-
     private var spacing: CGFloat { family == .systemMedium ? 2.4 : 2.8 }
 
     var body: some View {
@@ -45,16 +43,20 @@ struct ContributionGrid: View {
             let frameY = frameInsetTop
             let availableWidth = frameWidth - gridInsetLeading - gridInsetTrailing
             let verticalSpacingTotal = spacing * 6
-            let horizontalSpacingTotal = spacing * CGFloat(max(weeksToShow - 1, 0))
             let availableHeight = frameHeight - gridInsetTop - gridInsetBottom
 
-            let cellSizeFromWidth =
-                (availableWidth - horizontalSpacingTotal) / CGFloat(max(weeksToShow, 1))
             let cellSizeFromHeight =
                 (availableHeight - verticalSpacingTotal) / 7
+            let targetColumns = max(
+                1,
+                Int((availableWidth + spacing) / (cellSizeFromHeight + spacing))
+            )
+            let horizontalSpacingTotal = spacing * CGFloat(max(targetColumns - 1, 0))
+            let cellSizeFromWidth =
+                (availableWidth - horizontalSpacingTotal) / CGFloat(max(targetColumns, 1))
             let cellSize = max(2, min(cellSizeFromWidth, cellSizeFromHeight))
 
-            let weeksArray = weeks(from: contributions, weeksToShow: weeksToShow)
+            let weeksArray = weeks(from: contributions, columnsToShow: targetColumns)
 
             let actualGridWidth =
                 CGFloat(weeksArray.count) * cellSize + CGFloat(
@@ -100,10 +102,10 @@ struct ContributionGrid: View {
         }
     }
 
-    private func weeks(from contributions: [ContributionDay], weeksToShow: Int)
+    private func weeks(from contributions: [ContributionDay], columnsToShow: Int)
         -> [[ContributionDay]]
     {
-        let requiredDays = max(weeksToShow * 7, 7)
+        let requiredDays = max(columnsToShow * 7, 7)
         let visibleDays = Array(contributions.suffix(requiredDays))
 
         var paddedDays: [ContributionDay] = visibleDays
