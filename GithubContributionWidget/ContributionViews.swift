@@ -51,7 +51,7 @@ struct ContributionGrid: View {
                 1,
                 Int((availableWidth + spacing) / (cellSizeFromHeight + spacing))
             )
-            let targetColumns = family == .systemMedium ? 16 : adaptiveColumns
+            let targetColumns = family == .systemMedium ? 17 : adaptiveColumns
             let horizontalSpacingTotal = spacing * CGFloat(max(targetColumns - 1, 0))
             let cellSizeFromWidth =
                 (availableWidth - horizontalSpacingTotal) / CGFloat(max(targetColumns, 1))
@@ -66,7 +66,7 @@ struct ContributionGrid: View {
             let actualGridHeight = (cellSize * 7) + verticalSpacingTotal
 
             let gridLeading = frameX + gridInsetLeading + max(0, (availableWidth - actualGridWidth) / 2)
-            let gridTop = frameY + gridInsetTop + max(0, availableHeight - actualGridHeight) * 0.18
+            let gridTop = frameY + gridInsetTop + max(0, (availableHeight - actualGridHeight) / 2)
             let frameShape = RoundedRectangle(cornerRadius: family == .systemMedium ? 26 : 19, style: .continuous)
 
             ZStack(alignment: .topLeading) {
