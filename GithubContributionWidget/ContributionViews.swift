@@ -14,7 +14,7 @@ struct ContributionCell: View {
     let scheme: ColorScheme
 
     var body: some View {
-        RoundedRectangle(cornerRadius: size * 0.36, style: .continuous)
+        RoundedRectangle(cornerRadius: size * 0.48, style: .continuous)
             .fill(DesktopCalendarTheme.color(for: contribution.intensity, scheme: scheme))
             .frame(width: size, height: size)
     }
@@ -27,17 +27,17 @@ struct ContributionGrid: View {
 
     private let weeksToShow = 26
 
-    private var spacing: CGFloat { family == .systemMedium ? 7.5 : 4.5 }
+    private var spacing: CGFloat { family == .systemMedium ? 5.25 : 4.0 }
 
     var body: some View {
         GeometryReader { geometry in
             let frameInsetX: CGFloat = family == .systemMedium ? 18 : 12
-            let frameInsetTop: CGFloat = family == .systemMedium ? 16 : 10
-            let frameInsetBottom: CGFloat = family == .systemMedium ? 20 : 12
-            let gridInsetLeading: CGFloat = family == .systemMedium ? 16 : 10
-            let gridInsetTrailing: CGFloat = family == .systemMedium ? 16 : 10
-            let gridInsetTop: CGFloat = family == .systemMedium ? 10 : 8
-            let gridInsetBottom: CGFloat = family == .systemMedium ? 14 : 10
+            let frameInsetTop: CGFloat = family == .systemMedium ? 10 : 8
+            let frameInsetBottom: CGFloat = family == .systemMedium ? 12 : 10
+            let gridInsetLeading: CGFloat = family == .systemMedium ? 12 : 10
+            let gridInsetTrailing: CGFloat = family == .systemMedium ? 12 : 10
+            let gridInsetTop: CGFloat = family == .systemMedium ? 6 : 6
+            let gridInsetBottom: CGFloat = family == .systemMedium ? 8 : 8
 
             let frameWidth = geometry.size.width - frameInsetX * 2
             let frameHeight = geometry.size.height - frameInsetTop - frameInsetBottom
@@ -64,13 +64,13 @@ struct ContributionGrid: View {
 
             let gridLeading = frameX + gridInsetLeading + max(0, (availableWidth - actualGridWidth) / 2)
             let gridTop = frameY + gridInsetTop
-            let frameShape = RoundedRectangle(cornerRadius: family == .systemMedium ? 28 : 20, style: .continuous)
+            let frameShape = RoundedRectangle(cornerRadius: family == .systemMedium ? 30 : 20, style: .continuous)
 
             ZStack(alignment: .topLeading) {
                 frameShape
                     .stroke(
-                        DesktopCalendarTheme.color(for: .high, scheme: scheme).opacity(0.16),
-                        lineWidth: 1.3
+                        DesktopCalendarTheme.color(for: .high, scheme: scheme).opacity(0.28),
+                        lineWidth: 1.45
                     )
                     .frame(width: frameWidth, height: frameHeight)
                     .position(x: frameX + frameWidth / 2, y: frameY + frameHeight / 2)

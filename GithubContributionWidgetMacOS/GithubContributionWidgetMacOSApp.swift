@@ -6,10 +6,19 @@
 //
 
 import SwiftUI
+import WidgetKit
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         return true  // Closing app after close last window
+    }
+
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        WidgetCenter.shared.reloadAllTimelines()
+    }
+
+    func applicationDidBecomeActive(_ notification: Notification) {
+        WidgetCenter.shared.reloadAllTimelines()
     }
 }
 
