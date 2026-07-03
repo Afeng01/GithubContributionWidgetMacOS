@@ -80,24 +80,34 @@ struct SimpleEntry: TimelineEntry {
 struct GithubContributionWidgetEntryView: View {
     var entry: Provider.Entry
     @Environment(\.widgetFamily) var family
+    @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
-        if entry.contributions.isEmpty {
-            ZStack {
-                Color.clear
-                Text("No Data")
-                    .foregroundColor(.gray)
-                    .font(.caption)
-            }
-            .containerBackground(.black, for: .widget)
-        } else {
-            ContributionGrid(contributions: entry.contributions, family: family)
-                .containerBackground(.black, for: .widget).widgetURL(
-                    URL(
-                        string:
-                            "https://github.com/\(entry.configuration.username)"
-                    )!
-                )
+        ContributionGrid(
+            contributions: previewContributionsIfNeeded,
+            family: family,
+            range: entry.configuration.range,
+            scheme: colorScheme
+        )
+        .containerBackground(.clear, for: .widget)
+        .widgetURL(
+            URL(string: "https://github.com/\(entry.configuration.username)")!
+        )
+    }
+
+    private var previewContributionsIfNeeded: [ContributionDay] {
+        guard entry.contributions.isEmpty else { return entry.contributions }
+
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+
+        let totalDays = max(7, entry.configuration.range.weeks * 7)
+
+        return (0..<totalDays).map { offset in
+            let date = calendar.date(byAdding: .day, value: -(totalDays - 1) + offset, to: today) ?? today
+            let pattern = [0, 0, 1, 0, 2, 3, 4]
+            let count = pattern[offset % pattern.count]
+            return ContributionDay(date: date, contributionCount: count)
         }
     }
 }
@@ -113,9 +123,9 @@ struct GithubContributionWidget: Widget {
         ) { entry in
             GithubContributionWidgetEntryView(entry: entry)
         }
-        .configurationDisplayName("GitHub Activity")
-        .description("Track your GitHub contribution activity.")
-        .supportedFamilies([.systemSmall, .systemMedium])
+        .configurationDisplayName("Desktop Calendar")
+        .description("A desktop-style GitHub activity card.")
+        .supportedFamilies([.systemMedium])
         .contentMarginsDisabled()
     }
 }

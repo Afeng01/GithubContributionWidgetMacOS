@@ -11,10 +11,11 @@ import WidgetKit
 struct ContributionCell: View {
     let contribution: ContributionDay
     let size: CGFloat
+    let scheme: ColorScheme
 
     var body: some View {
-        RoundedRectangle(cornerRadius: size * 0.2)
-            .fill(contribution.intensity.color)
+        RoundedRectangle(cornerRadius: size * 0.18, style: .continuous)
+            .fill(DesktopCalendarTheme.color(for: contribution.intensity, scheme: scheme))
             .frame(width: size, height: size)
     }
 }
@@ -22,83 +23,108 @@ struct ContributionCell: View {
 struct ContributionGrid: View {
     let contributions: [ContributionDay]
     let family: WidgetFamily
+    let range: ContributionRangeOption
+    let scheme: ColorScheme
 
-    private var spacing: CGFloat { 3.0 }
+    private var spacing: CGFloat { family == .systemMedium ? 7.5 : 4.5 }
 
     var body: some View {
         GeometryReader { geometry in
-            let verticalPadding = geometry.size.height * 0.08
-            let horizontalPadding = verticalPadding
+            let weeksToShow = range.weeks
+            let outerCornerRadius: CGFloat = family == .systemMedium ? 30 : 22
+            let outerPadding = max(7, geometry.size.width * 0.015)
+            let borderGap: CGFloat = family == .systemMedium ? 8 : 6
+            let contentInset: CGFloat = family == .systemMedium ? 12 : 8
+            let contentPadding = outerPadding + borderGap + contentInset
 
-            let availableHeight = geometry.size.height - (verticalPadding * 2)
-            let availableWidth = geometry.size.width - (horizontalPadding * 2)
+            let availableHeight = geometry.size.height - contentPadding * 2
+            let availableWidth = geometry.size.width - contentPadding * 2
+            let verticalSpacingTotal = spacing * 6
+            let horizontalSpacingTotal = spacing * CGFloat(max(weeksToShow - 1, 0))
 
-            let totalSpacing = spacing * 6
-            let cellSize = (availableHeight - totalSpacing) / 7
-            let weekWidth = cellSize + spacing
-            let maxWeeks = Int(availableWidth / weekWidth)
-            let weeksToShow = min(maxWeeks, 52)
+            let cellSizeFromHeight = (availableHeight - verticalSpacingTotal) / 7
+            let cellSizeFromWidth = (availableWidth - horizontalSpacingTotal) / CGFloat(max(weeksToShow, 1))
+            let cellSize = max(2, min(cellSizeFromHeight, cellSizeFromWidth))
 
-            let calendar = Calendar.current
-            let today = contributions.last?.date ?? Date()
-            let weekday = calendar.component(.weekday, from: today)
-            let totalDaysNeeded = (weeksToShow * 7) + weekday
-
-            let contributionsToShow = Array(
-                contributions.suffix(totalDaysNeeded)
-            )
-            let weeksArray = weeks(from: contributionsToShow)
+            let weeksArray = weeks(from: contributions, weeksToShow: weeksToShow)
 
             let actualGridWidth =
                 CGFloat(weeksArray.count) * cellSize + CGFloat(
                     weeksArray.count - 1
                 ) * spacing
+            let actualGridHeight = (cellSize * 7) + verticalSpacingTotal
 
-            HStack(spacing: spacing) {
-                ForEach(weeksArray.indices, id: \.self) { weekIndex in
-                    VStack(spacing: spacing) {
-                        ForEach(0..<7) { dayIndex in
-                            ContributionCell(
-                                contribution: weeksArray[weekIndex][dayIndex],
-                                size: cellSize
-                            )
+            let gridLeading = contentPadding + max(0, (availableWidth - actualGridWidth) / 2)
+            let gridTop = contentPadding + max(0, (availableHeight - actualGridHeight) / 2)
+            let frameShape = RoundedRectangle(cornerRadius: outerCornerRadius, style: .continuous)
+
+            ZStack(alignment: .topLeading) {
+                frameShape
+                    .stroke(
+                        DesktopCalendarTheme.color(for: .high, scheme: scheme).opacity(0.48),
+                        lineWidth: 1.25
+                    )
+                    .padding(outerPadding)
+                    .shadow(
+                        color: DesktopCalendarTheme.color(for: .high, scheme: scheme).opacity(0.16),
+                        radius: 6,
+                        x: 0,
+                        y: 2
+                    )
+
+                frameShape
+                    .inset(by: borderGap)
+                    .stroke(
+                        DesktopCalendarTheme.color(for: .high, scheme: scheme).opacity(0.74),
+                        lineWidth: 1.3
+                    )
+                    .padding(outerPadding)
+
+                HStack(spacing: spacing) {
+                    ForEach(weeksArray.indices, id: \.self) { weekIndex in
+                        VStack(spacing: spacing) {
+                            ForEach(0..<7) { dayIndex in
+                                ContributionCell(
+                                    contribution: weeksArray[weekIndex][dayIndex],
+                                    size: cellSize,
+                                    scheme: scheme
+                                )
+                            }
                         }
                     }
                 }
+                .frame(width: actualGridWidth, height: actualGridHeight, alignment: .topLeading)
+                .padding(.leading, gridLeading)
+                .padding(.top, gridTop)
             }
-            .frame(width: actualGridWidth, height: availableHeight)
             .frame(
                 width: geometry.size.width,
                 height: geometry.size.height,
-                alignment: .center
+                alignment: .topLeading
             )
         }
     }
 
-    private func weeks(from contributions: [ContributionDay])
+    private func weeks(from contributions: [ContributionDay], weeksToShow: Int)
         -> [[ContributionDay]]
     {
-        guard !contributions.isEmpty else { return [] }
+        let requiredDays = max(weeksToShow * 7, 7)
+        let visibleDays = Array(contributions.suffix(requiredDays))
 
-        var weeks: [[ContributionDay]] = []
-        var currentWeek: [ContributionDay] = []
-
-        for day in contributions {
-            currentWeek.append(day)
-            if currentWeek.count == 7 {
-                weeks.append(currentWeek)
-                currentWeek = []
-            }
+        var paddedDays: [ContributionDay] = visibleDays
+        if paddedDays.count < requiredDays {
+            let missing = requiredDays - paddedDays.count
+            paddedDays = Array(repeating: ContributionDay(date: Date(), contributionCount: nil), count: missing) + paddedDays
         }
 
-        if !currentWeek.isEmpty {
+        guard !paddedDays.isEmpty else { return [] }
 
-            while currentWeek.count < 7 {
-                currentWeek.append(
-                    ContributionDay(date: Date(), contributionCount: nil)
-                )
+        var weeks: [[ContributionDay]] = []
+        for index in stride(from: 0, to: paddedDays.count, by: 7) {
+            let slice = Array(paddedDays[index..<min(index + 7, paddedDays.count)])
+            if slice.count == 7 {
+                weeks.append(slice)
             }
-            weeks.append(currentWeek)
         }
 
         return weeks
