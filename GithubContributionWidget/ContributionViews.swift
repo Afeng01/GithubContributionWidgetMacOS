@@ -47,10 +47,11 @@ struct ContributionGrid: View {
 
             let cellSizeFromHeight =
                 (availableHeight - verticalSpacingTotal) / 7
-            let targetColumns = max(
+            let adaptiveColumns = max(
                 1,
                 Int((availableWidth + spacing) / (cellSizeFromHeight + spacing))
             )
+            let targetColumns = family == .systemMedium ? 16 : adaptiveColumns
             let horizontalSpacingTotal = spacing * CGFloat(max(targetColumns - 1, 0))
             let cellSizeFromWidth =
                 (availableWidth - horizontalSpacingTotal) / CGFloat(max(targetColumns, 1))

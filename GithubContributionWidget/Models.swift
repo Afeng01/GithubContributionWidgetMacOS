@@ -18,16 +18,16 @@ enum DesktopCalendarTheme {
 
     static func frameStroke(for scheme: ColorScheme) -> Color {
         if scheme == .dark {
-            return Color.white.opacity(0.26)
+            return Color.white.opacity(0.12)
         }
-        return Color.black.opacity(0.22)
+        return Color.black.opacity(0.10)
     }
 
     static func frameGlow(for scheme: ColorScheme) -> Color {
         if scheme == .dark {
-            return Color.white.opacity(0.08)
+            return Color.white.opacity(0.04)
         }
-        return Color.black.opacity(0.10)
+        return Color.black.opacity(0.05)
     }
 
     static func color(for intensity: ContributionIntensity, scheme: ColorScheme) -> Color {
@@ -35,17 +35,17 @@ enum DesktopCalendarTheme {
 
         switch intensity {
         case .transparent:
-            return base.opacity(0.035)
+            return base.opacity(0.028)
         case .none:
-            return base.opacity(0.085)
+            return base.opacity(0.075)
         case .low:
-            return base.opacity(0.20)
+            return base.opacity(0.16)
         case .medium:
-            return base.opacity(0.34)
+            return base.opacity(0.28)
         case .high:
-            return base.opacity(0.52)
+            return base.opacity(0.42)
         case .veryHigh:
-            return base.opacity(0.76)
+            return base.opacity(0.60)
         }
     }
 }
