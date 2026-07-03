@@ -9,22 +9,43 @@ import Foundation
 import SwiftUI
 
 enum DesktopCalendarTheme {
+    static func surfaceFill(for scheme: ColorScheme) -> Color {
+        if scheme == .dark {
+            return Color.white.opacity(0.06)
+        }
+        return Color.black.opacity(0.055)
+    }
+
+    static func frameStroke(for scheme: ColorScheme) -> Color {
+        if scheme == .dark {
+            return Color.white.opacity(0.26)
+        }
+        return Color.black.opacity(0.22)
+    }
+
+    static func frameGlow(for scheme: ColorScheme) -> Color {
+        if scheme == .dark {
+            return Color.white.opacity(0.08)
+        }
+        return Color.black.opacity(0.10)
+    }
+
     static func color(for intensity: ContributionIntensity, scheme: ColorScheme) -> Color {
         let base = scheme == .dark ? Color.white : Color.black
 
         switch intensity {
         case .transparent:
-            return base.opacity(0.06)
+            return base.opacity(0.035)
         case .none:
-            return base.opacity(0.12)
+            return base.opacity(0.085)
         case .low:
-            return base.opacity(0.22)
+            return base.opacity(0.20)
         case .medium:
-            return base.opacity(0.36)
+            return base.opacity(0.34)
         case .high:
-            return base.opacity(0.54)
+            return base.opacity(0.52)
         case .veryHigh:
-            return base.opacity(0.78)
+            return base.opacity(0.76)
         }
     }
 }
