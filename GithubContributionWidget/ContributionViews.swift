@@ -14,7 +14,7 @@ struct ContributionCell: View {
     let scheme: ColorScheme
 
     var body: some View {
-        RoundedRectangle(cornerRadius: size * 0.42, style: .continuous)
+        RoundedRectangle(cornerRadius: size * 0.22, style: .continuous)
             .fill(DesktopCalendarTheme.color(for: contribution.intensity, scheme: scheme))
             .frame(width: size, height: size)
     }
@@ -25,17 +25,17 @@ struct ContributionGrid: View {
     let family: WidgetFamily
     let scheme: ColorScheme
 
-    private var spacing: CGFloat { family == .systemMedium ? 3.15 : 3.0 }
+    private var spacing: CGFloat { family == .systemMedium ? 2.7 : 2.5 }
 
     var body: some View {
         GeometryReader { geometry in
-            let frameInsetX: CGFloat = family == .systemMedium ? 10 : 10
-            let frameInsetTop: CGFloat = family == .systemMedium ? 9 : 8
-            let frameInsetBottom: CGFloat = family == .systemMedium ? 11 : 10
-            let gridInsetLeading: CGFloat = family == .systemMedium ? 9 : 8
-            let gridInsetTrailing: CGFloat = family == .systemMedium ? 9 : 8
-            let gridInsetTop: CGFloat = family == .systemMedium ? 8 : 6
-            let gridInsetBottom: CGFloat = family == .systemMedium ? 8 : 6
+            let frameInsetX: CGFloat = family == .systemMedium ? 7 : 8
+            let frameInsetTop: CGFloat = family == .systemMedium ? 7 : 8
+            let frameInsetBottom: CGFloat = family == .systemMedium ? 9 : 9
+            let gridInsetLeading: CGFloat = family == .systemMedium ? 12 : 10
+            let gridInsetTrailing: CGFloat = family == .systemMedium ? 12 : 10
+            let gridInsetTop: CGFloat = family == .systemMedium ? 9 : 7
+            let gridInsetBottom: CGFloat = family == .systemMedium ? 9 : 7
 
             let frameWidth = geometry.size.width - frameInsetX * 2
             let frameHeight = geometry.size.height - frameInsetTop - frameInsetBottom
@@ -54,7 +54,7 @@ struct ContributionGrid: View {
             let horizontalSpacingTotal = spacing * CGFloat(max(targetColumns - 1, 0))
             let cellSizeFromWidth =
                 (availableWidth - horizontalSpacingTotal) / CGFloat(max(targetColumns, 1))
-            let cellSize = max(2, min(cellSizeFromWidth, cellSizeFromHeight))
+            let cellSize = max(2, min(cellSizeFromWidth, cellSizeFromHeight) * 0.88)
 
             let weeksArray = weeks(from: contributions, columnsToShow: targetColumns)
 
@@ -65,8 +65,8 @@ struct ContributionGrid: View {
             let actualGridHeight = (cellSize * 7) + verticalSpacingTotal
 
             let gridLeading = frameX + gridInsetLeading + max(0, (availableWidth - actualGridWidth) / 2)
-            let gridTop = frameY + gridInsetTop + max(0, (availableHeight - actualGridHeight) / 2) * 0.35
-            let frameShape = RoundedRectangle(cornerRadius: family == .systemMedium ? 24 : 18, style: .continuous)
+            let gridTop = frameY + gridInsetTop + max(0, availableHeight - actualGridHeight) * 0.12
+            let frameShape = RoundedRectangle(cornerRadius: family == .systemMedium ? 26 : 19, style: .continuous)
 
             ZStack(alignment: .topLeading) {
                 frameShape
