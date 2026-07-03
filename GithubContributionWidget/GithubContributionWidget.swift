@@ -81,13 +81,15 @@ struct GithubContributionWidgetEntryView: View {
     var entry: Provider.Entry
     @Environment(\.widgetFamily) var family
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.widgetRenderingMode) var renderingMode
     private let previewWeeks = 26
 
     var body: some View {
         ContributionGrid(
             contributions: previewContributionsIfNeeded,
             family: family,
-            scheme: colorScheme
+            scheme: colorScheme,
+            renderingMode: renderingMode
         )
         .containerBackground(.clear, for: .widget)
         .widgetURL(

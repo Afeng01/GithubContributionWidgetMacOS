@@ -7,31 +7,65 @@
 
 import Foundation
 import SwiftUI
+import WidgetKit
 
 enum DesktopCalendarTheme {
-    static func surfaceFill(for scheme: ColorScheme) -> Color {
+    static func surfaceFill(for scheme: ColorScheme, renderingMode: WidgetRenderingMode) -> Color {
+        if renderingMode == .vibrant {
+            return Color.black.opacity(scheme == .dark ? 0.34 : 0.28)
+        }
         if scheme == .dark {
             return Color.white.opacity(0.06)
         }
         return Color.black.opacity(0.055)
     }
 
-    static func frameStroke(for scheme: ColorScheme) -> Color {
+    static func frameStroke(for scheme: ColorScheme, renderingMode: WidgetRenderingMode) -> Color {
+        if renderingMode == .vibrant {
+            return Color.white.opacity(0.10)
+        }
         if scheme == .dark {
             return Color.white.opacity(0.08)
         }
         return Color.black.opacity(0.07)
     }
 
-    static func frameGlow(for scheme: ColorScheme) -> Color {
+    static func frameGlow(for scheme: ColorScheme, renderingMode: WidgetRenderingMode) -> Color {
+        if renderingMode == .vibrant {
+            return Color.black.opacity(0.16)
+        }
         if scheme == .dark {
             return Color.white.opacity(0.04)
         }
         return Color.black.opacity(0.05)
     }
 
-    static func color(for intensity: ContributionIntensity, scheme: ColorScheme) -> Color {
-        let base = scheme == .dark ? Color.white : Color.black
+    static func color(
+        for intensity: ContributionIntensity,
+        scheme: ColorScheme,
+        renderingMode: WidgetRenderingMode
+    ) -> Color {
+        let base =
+            renderingMode == .vibrant
+            ? Color.white
+            : (scheme == .dark ? Color.white : Color.black)
+
+        if renderingMode == .vibrant {
+            switch intensity {
+            case .transparent:
+                return base.opacity(0.03)
+            case .none:
+                return base.opacity(0.10)
+            case .low:
+                return base.opacity(0.28)
+            case .medium:
+                return base.opacity(0.46)
+            case .high:
+                return base.opacity(0.68)
+            case .veryHigh:
+                return base.opacity(0.88)
+            }
+        }
 
         switch intensity {
         case .transparent:

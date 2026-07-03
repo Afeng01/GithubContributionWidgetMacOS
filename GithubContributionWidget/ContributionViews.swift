@@ -12,10 +12,17 @@ struct ContributionCell: View {
     let contribution: ContributionDay
     let size: CGFloat
     let scheme: ColorScheme
+    let renderingMode: WidgetRenderingMode
 
     var body: some View {
         RoundedRectangle(cornerRadius: size * 0.22, style: .continuous)
-            .fill(DesktopCalendarTheme.color(for: contribution.intensity, scheme: scheme))
+            .fill(
+                DesktopCalendarTheme.color(
+                    for: contribution.intensity,
+                    scheme: scheme,
+                    renderingMode: renderingMode
+                )
+            )
             .frame(width: size, height: size)
     }
 }
@@ -24,8 +31,9 @@ struct ContributionGrid: View {
     let contributions: [ContributionDay]
     let family: WidgetFamily
     let scheme: ColorScheme
+    let renderingMode: WidgetRenderingMode
 
-    private var spacing: CGFloat { family == .systemMedium ? 2.7 : 2.5 }
+    private var spacing: CGFloat { family == .systemMedium ? 3.3 : 2.8 }
 
     var body: some View {
         GeometryReader { geometry in
@@ -71,19 +79,30 @@ struct ContributionGrid: View {
 
             ZStack(alignment: .topLeading) {
                 frameShape
-                    .fill(DesktopCalendarTheme.surfaceFill(for: scheme))
+                    .fill(
+                        DesktopCalendarTheme.surfaceFill(
+                            for: scheme,
+                            renderingMode: renderingMode
+                        )
+                    )
                     .frame(width: frameWidth, height: frameHeight)
                     .position(x: frameX + frameWidth / 2, y: frameY + frameHeight / 2)
 
                 frameShape
                     .stroke(
-                        DesktopCalendarTheme.frameStroke(for: scheme),
+                        DesktopCalendarTheme.frameStroke(
+                            for: scheme,
+                            renderingMode: renderingMode
+                        ),
                         lineWidth: 1.2
                     )
                     .frame(width: frameWidth, height: frameHeight)
                     .position(x: frameX + frameWidth / 2, y: frameY + frameHeight / 2)
                     .shadow(
-                        color: DesktopCalendarTheme.frameGlow(for: scheme),
+                        color: DesktopCalendarTheme.frameGlow(
+                            for: scheme,
+                            renderingMode: renderingMode
+                        ),
                         radius: 8,
                         x: 0,
                         y: 2
@@ -96,7 +115,8 @@ struct ContributionGrid: View {
                                 ContributionCell(
                                     contribution: weeksArray[weekIndex][dayIndex],
                                     size: cellSize,
-                                    scheme: scheme
+                                    scheme: scheme,
+                                    renderingMode: renderingMode
                                 )
                             }
                         }
