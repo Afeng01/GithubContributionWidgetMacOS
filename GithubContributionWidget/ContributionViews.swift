@@ -14,7 +14,7 @@ struct ContributionCell: View {
     let scheme: ColorScheme
 
     var body: some View {
-        RoundedRectangle(cornerRadius: size * 0.18, style: .continuous)
+        RoundedRectangle(cornerRadius: size * 0.36, style: .continuous)
             .fill(DesktopCalendarTheme.color(for: contribution.intensity, scheme: scheme))
             .frame(width: size, height: size)
     }
@@ -23,21 +23,21 @@ struct ContributionCell: View {
 struct ContributionGrid: View {
     let contributions: [ContributionDay]
     let family: WidgetFamily
-    let range: ContributionRangeOption
     let scheme: ColorScheme
+
+    private let weeksToShow = 26
 
     private var spacing: CGFloat { family == .systemMedium ? 7.5 : 4.5 }
 
     var body: some View {
         GeometryReader { geometry in
-            let weeksToShow = range.weeks
             let frameInsetX: CGFloat = family == .systemMedium ? 18 : 12
             let frameInsetTop: CGFloat = family == .systemMedium ? 16 : 10
             let frameInsetBottom: CGFloat = family == .systemMedium ? 20 : 12
             let gridInsetLeading: CGFloat = family == .systemMedium ? 16 : 10
             let gridInsetTrailing: CGFloat = family == .systemMedium ? 16 : 10
-            let gridInsetTop: CGFloat = family == .systemMedium ? 12 : 8
-            let gridInsetBottom: CGFloat = family == .systemMedium ? 18 : 12
+            let gridInsetTop: CGFloat = family == .systemMedium ? 10 : 8
+            let gridInsetBottom: CGFloat = family == .systemMedium ? 14 : 10
 
             let frameWidth = geometry.size.width - frameInsetX * 2
             let frameHeight = geometry.size.height - frameInsetTop - frameInsetBottom

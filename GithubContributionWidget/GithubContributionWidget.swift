@@ -81,12 +81,12 @@ struct GithubContributionWidgetEntryView: View {
     var entry: Provider.Entry
     @Environment(\.widgetFamily) var family
     @Environment(\.colorScheme) var colorScheme
+    private let previewWeeks = 26
 
     var body: some View {
         ContributionGrid(
             contributions: previewContributionsIfNeeded,
             family: family,
-            range: entry.configuration.range,
             scheme: colorScheme
         )
         .containerBackground(.clear, for: .widget)
@@ -101,7 +101,7 @@ struct GithubContributionWidgetEntryView: View {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
 
-        let totalDays = max(7, entry.configuration.range.weeks * 7)
+        let totalDays = max(7, previewWeeks * 7)
 
         return (0..<totalDays).map { offset in
             let date = calendar.date(byAdding: .day, value: -(totalDays - 1) + offset, to: today) ?? today
